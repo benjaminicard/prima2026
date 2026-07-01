@@ -1,6 +1,6 @@
-# Moral Evaluation of Speech Acts — Truthfulness, Lies, and Ethical Dilemmas — Modeled and Implemented with ASP
+# Formalizing the Moral Evaluation of Speech Acts: Truthfulness, Lies and Ethical Dilemmas
 
-This repository accompanies our paper submission to **AAMAS 2026** ([conference website](https://cyprusconferences.org/aamas2026/)).
+This repository accompanies our paper submission to **PRIMA 2026** ([conference website](https://www.prima2026.org)).
 
 It provides a Python-driven implementation of an Answer Set Programming (ASP) framework (via **Clingo** and **Clyngor**) to model and evaluate speech acts in high-stakes ethical scenarios. Using Sartre’s *The Wall* (1939) as a running case, the framework integrates major moral theories—**deontologism**, **principialism** (v1 and v2), and **consequentialism** (two utility variants)—to assess the permissibility of speech acts based on (i) the speaker’s honesty/dishonesty, (ii) the objective truth-value of the utterance, (iii) moral motives, and (iv) outcomes for third parties.
 
