@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""aamas2026_asp.ipynb
+"""prima2026_asp.ipynb
 
 """
 
