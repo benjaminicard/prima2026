@@ -51,14 +51,14 @@ python -m pip install clyngor-with-clingo
 
 ### Option A — Run as a script
 ```bash
-python aamas2026_asp.py
+python prima2026_asp.py
 ```
 
 ### Option B — Jupyter / Colab
 Open the file in a notebook cell and run. The inline Markdown tables will render in the notebook.
 
 ### Selecting a scenario
-Inside `aamas2026_asp.py`, scenarios are toggled in the ASP **`program1`** string:
+Inside `prima2026_asp.py`, scenarios are toggled in the ASP **`program1`** string:
 ```prolog
 % Current and potential situations
 situation(s1).   % <- active by default
@@ -80,7 +80,7 @@ This lets you contrast, for example, how a **truthful utterance intended as a li
 
 ## Code Structure
 
-- **`aamas2026_asp.py`** — Single self-contained script that:
+- **`prima2026_asp.py`** — Single self-contained script that:
   - Declares the **ASP programs** (scenario facts; honesty/truth predicates; action consequences; maxims/principles; utility aggregation; counterfactual comparison).
   - Runs the solver and prints structured results.
 
