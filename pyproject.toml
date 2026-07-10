@@ -1,0 +1,14 @@
+[project]
+name = "prima2026"
+version = "0.1.0"
+requires-python = "==3.13.0"
+dependencies = [
+    "arpeggio==2.0.3",
+    "cffi==2.0.0",
+    "clingo==5.8.0",
+    "clyngor==0.5.2",
+    "clyngor-with-clingo==5.3.post1",
+    "ipython==9.15.0",
+    "pytest==9.1.1",
+    "setuptools==80.10.2",
+]
