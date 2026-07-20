@@ -14,27 +14,28 @@ situation(base). %mk1
 
 
 % Belief base for the environment's objective facts and for the main agent's beliefs
-plannumber(0..1).
-beliefbase(env).
-beliefbase(p(D)):-plannumber(D).
+round(0..1).
+beliefbase(env,pBelief).
 
 
 % Description of situation base (current situation)
 
 %% Beliefs about location
 believe(env, at(r,cemetery)) :-situation(base).
-believe(p(0), at(r,family)):-situation(base).
+believe(pBelief, at(r,family)):-situation(base).
 
 %% Beliefs about hostility
-believe(p(0),hostile(q)) :-situation(base).
-believe(env,hostile(q)):-situation(base).
+believe(env,hostile(q,r)):-situation(base).
+believe(env,hostile(q,p)):-situation(base).
 believe(env,murderer(q)):-situation(base).
-believe(p(0),murderer(q)):-situation(base).
+believe(pBelief,hostile(q,r)) :-situation(base).
+believe(pBelief,hostile(q,p)) :-situation(base).
+believe(pBelief,murderer(q)):-situation(base).
 
 %% Beliefs about credible locations
-believe(p(0),credible(at(r,madrid), q)):-situation(base).
-believe(p(0),credible(at(r,cemetery), q)):-situation(base).
-believe(p(0),credible(at(r,family), q)):-situation(base).
+believe(pBelief,credible(at(r,madrid), q)):-situation(base).
+believe(pBelief,credible(at(r,cemetery), q)):-situation(base).
+believe(pBelief,credible(at(r,family), q)):-situation(base).
 believe(env,credible(at(r,cemetery), q)):-situation(base).
 believe(env,credible(at(r,family), q)):-situation(base).
 
@@ -45,18 +46,18 @@ believe(env,credible(at(r,family), q)):-situation(base).
 
 %% Beliefs about location
 believe(env, at(r,cemetery)) :-situation(alt1).
-believe(p(0), at(r,family)):-situation(alt1).
+believe(pBelief, at(r,family)):-situation(alt1).
 
 %% Beliefs about hostility
-believe(p(0),hostile(q)) :-situation(alt1).
-believe(env,hostile(q)):-situation(alt1).
+believe(pBelief,hostile(q,r)) :-situation(alt1).
+believe(env,hostile(q,r)):-situation(alt1).
 believe(env,murderer(q)):-situation(alt1).
-believe(p(0),murderer(q)):-situation(alt1).
+believe(pBelief,murderer(q)):-situation(alt1).
 
 %% Beliefs about credible locations
-believe(p(0),credible(at(r,madrid), q)):-situation(alt1).
-believe(p(0),credible(at(r,cemetery), q)):-situation(alt1).
-believe(p(0),credible(at(r,family), q)):-situation(alt1).
+believe(pBelief,credible(at(r,madrid), q)):-situation(alt1).
+believe(pBelief,credible(at(r,cemetery), q)):-situation(alt1).
+believe(pBelief,credible(at(r,family), q)):-situation(alt1).
 believe(env,credible(at(r,cemetery), q)):-situation(alt1).
 believe(env,credible(at(r,family), q)):-situation(alt1).
 believe(env,credible(at(r,madrid), q)):-situation(alt1).
@@ -66,59 +67,44 @@ believe(env,credible(at(r,madrid), q)):-situation(alt1).
 
 %% Beliefs about location
 believe(env, at(r,cemetery)) :-situation(alt2).
-believe(p(0), at(r,family)):-situation(alt2).
+believe(pBelief, at(r,family)):-situation(alt2).
 
 %% Beliefs about hostility
-believe(p(0),hostile(q)) :-situation(alt2).
-believe(env,hostile(q)):-situation(alt2).
+believe(pBelief,hostile(q,r)) :-situation(alt2).
+believe(env,hostile(q,r)):-situation(alt2).
 
 %% Beliefs about credible locations
-believe(p(0),credible(at(r,madrid), q)):-situation(alt2).
-believe(p(0),credible(at(r,cemetery), q)):-situation(alt2).
-believe(p(0),credible(at(r,family), q)):-situation(alt2).
+believe(pBelief,credible(at(r,madrid), q)):-situation(alt2).
+believe(pBelief,credible(at(r,cemetery), q)):-situation(alt2).
+believe(pBelief,credible(at(r,family), q)):-situation(alt2).
 believe(env,credible(at(r,cemetery), q)):-situation(alt2).
 believe(env,credible(at(r,family), q)):-situation(alt2).
 
 
 
-%Inertia
-
-believe(p(D+1),F):- believe(p(D),F), not -believe(p(D+1),F), plannumber(D+1).
-
--believe(p(D+1), credible(at(r,L), q)):- believe(p(D), credible(at(r,L), q)),
-                                         utter(p,q,D,inform(at(r,L))),
-                                         not believe(p(D),D, utter(q,p,D+1,query_ref(at(r)))),
-                                         believe(env,D+1,utter(q,p,D+1,query_ref(at(r)))),
-                                         plannumber(D+1).
-
-believe(p(D+1), credible(at(r,L),q)) :- not believe(p(D), credible(at(r,L),q)),
-                                        utter(p,q,D,inform(at(r,L))),
-                                        not believe(p(D+1), D+1, utter(q,p,D+1,query_ref(at(r)))),
-                                        believe(env, D+1, utter(q,p,D+1,query_ref(at(r)))),
-                                        plannumber(D+1).
-
 % Relation between questioning round and actions
-believe(env,0, utter(q,p,0,query_ref(at(r)))).
-believe(p(0),0, utter(q,p,0,query_ref(at(r)))).
+believe(env, utter(q,p,0,query(at(r)))).
+believe(pBelief, utter(q,p,0,query(at(r)))).
 
 
 
-%anticipated reaction (true or false)
-1{utter(p,q,D,inform(at(r,L))): location(L), believe(p(D),credible(at(r,L),q));
-  act(D,silence(p,q))}1:- believe(p(D),D,utter(q,p,D,query_ref(at(r)))).
-                          0{act(D,attempt_evade(p,Y))}1:- believe(p(D),D,check(Y,madrid,r)).
 
-%unanticipated reaction
-1{utter(p,q,D,inform(at(r,L))): location(L),believe(p(D+1),credible(at(r,L),q));
-  act(D+1,silence(p,q))}1 :- believe(env,D,utter(q,p,D,query_ref(at(r)))),
-                             not believe(p(D),D,utter(q,p,D,query_ref(at(r)))),
-                             plannumber(D).
-%Decision Inertia
-act(D+1,A):- act(D,A), not -act(D+1,A), plannumber(D+1).
+1{utter(p,q,N,inform(at(r,L))): location(L), believe(pBelief,credible(at(r,L),q));
+  act(silence(p,q,N))}1:- believe(pBelief,utter(q,p,N,query(at(r)))).
+
+0{act(evade(p,Y))}1:- believe(pBelief,check(Y,X,madrid,r)).
+
+% %unanticipated reaction
+% 1{utter(p,q,D,inform(at(r,L))): location(L),believe(p(D+1),credible(at(r,L),q));
+%   act(D+1,silence(p,q))}1 :- believe(env,D,utter(q,p,D,query(at(r)))),
+%                              not believe(p(D),D,utter(q,p,D,query(at(r)))),
+%                              plannumber(D).
+% %Decision Inertia
+% act(D+1,A):- act(D,A), not -act(D+1,A), plannumber(D+1).
 
 
--act(D+1,attempt_evade(p,Y)):- act(D,attempt_evade(p,Y)), person(Y),
-                               not believe(p(D+1),D+1,check(Y,madrid,r)).
+% -act(D+1,attempt_evade(p,Y)):- act(D,attempt_evade(p,Y)), person(Y),
+%                                not believe(p(D+1),D+1,check(Y,madrid,r)).
 
 
 
@@ -126,68 +112,78 @@ act(D+1,A):- act(D,A), not -act(D+1,A), plannumber(D+1).
 
 % RULES FOR PHYSICAL ACTIONS
 % Rule for checking a location
-believe(Y,D,check(P2,L,r)) :- utter(P1,P2,D, inform(at(r,L))), believe(Y,credible(at(r,L), P2)).
+believe(P1,check(X,Y,L,Z)) :- utter(Y,X,N, inform(at(Z,L))), believe(P1,credible(at(r,L), X)).
 
 
-% Rule for reasking a question based on non-credible information
-believe(Y,D+1,utter(P2,P1,D+1,query_ref(at(r)))) :- utter(P1,P2,D,inform(at(r,L))), 
-                                                    not believe(Y,credible(at(r,L), P2)), 
-                                                    plannumber(D),plannumber(D+1), beliefbase(Y).
+% % Rule for reasking a question based on non-credible information
+% believe(Y,D+1,utter(P2,P1,D+1,query(at(r)))) :- utter(P1,P2,D,inform(at(r,L))), 
+%                                                     not believe(Y,credible(at(r,L), P2)), 
+%                                                     plannumber(D),plannumber(D+1), beliefbase(Y).
 
 % Rule for evasion
-believe(Y,D,evade_success(p,P2)) :- act(D, attempt_evade(p,P2)), believe(Y,D,
-                                    check(P2,madrid,r)).
+believe(X,escaped(p,Y)) :- act(evade(p,Y)), believe(X,check(Y,madrid,r)).
 
 % Rule for killing
-believe(Y,D,kill(P2,P1,r)) :- believe(Y,D,check(P2,L,r)), believe(Y,at(r,L)), 
-                              believe(Y,murderer(P2)), person(P1).
+believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)), 
+                              believe(P1,murderer(X)).
 
-% Rule for helping
-believe(Y,D,help(P2)) :- believe(Y,D,check(P2,L,r)), believe(Y,at(r,L)), 
-                         not believe(Y,hostile(P2)).
 
-% Rule for agents loosing patience (first condition)
-believe(Y,D,patienceLost(P2, P1)) :- utter(P1,P2,D,inform(at(r,L))), 
-                                     not believe(Y,credible(at(r,L), P2)), 
-                                     believe(Y,hostile(P2)), plannumber(D).
+% % Rule for agents loosing patience (first condition)
+% believe(Y,D,patienceLost(P2, P1)) :- utter(P1,P2,D,inform(at(r,L))), 
+%                                      not believe(Y,credible(at(r,L), P2)), 
+%                                      believe(Y,hostile(P2)), plannumber(D).
 
-% Rule for agents loosing patience (second condition)
-believe(Y,D,patienceLost(P2, P1)) :- act(D,silence(P1, P2)), believe(Y,hostile(P2)).
+% % Rule for agents loosing patience (second condition)
+% believe(Y,D,patienceLost(P2, P1)) :- act(D,silence(P1, P2)), believe(Y,hostile(P2)).
 
-% Rule for wrong information provided
-believe(Y,D,wrongInfo(P2, P1)) :- believe(Y,D,check(P2, L, r)), 
-                                  not believe(Y,at(r,L)), person(P1).
+% % Rule for wrong information provided
+% believe(Y,D,wrongInfo(P2, P1)) :- believe(Y,D,check(P2, L, r)), 
+%                                   not believe(Y,at(r,L)), person(P1).
 
-% Rule for an agent being harmed based on another agent loosing patience
-believe(Y,D,harm1(P2, P1)) :- believe(Y,D,patienceLost(P2, P1)).
+% % Rule for an agent being harmed based on another agent loosing patience
+% believe(Y,D,harm1(P2, P1)) :- believe(Y,D,patienceLost(P2, P1)).
 
-% Rule for an agent being harmed based on hostility and another agent providing wrong information
-believe(Y,D,harm2(P2, P1)) :- believe(Y,D,wrongInfo(P2, P1)), believe(Y,hostile(P2)), 
-                              not believe(Y,D,evade_success(P1,P2)).
+% % Rule for an agent being harmed based on hostility and another agent providing wrong information
+% believe(Y,D,harm2(P2, P1)) :- believe(Y,D,wrongInfo(P2, P1)), believe(Y,hostile(P2)), 
+%                               not believe(Y,D,evade_success(P1,P2)).
+
+
+
+% Rules for an agent being harmed based on differents reasons
+reason(uncredibleStatement,refusedToAnswer,uncoveredLie,failedEvade).
+
+believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
+
+believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)) .
+
+believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .
+
+believe(P1, harm(X,Y,failedEvade)):-  act(evade(Y,X)), not believe(P1, check(X,_,madrid,_)), beliefbase(P1).
+
 
 
 % ----------------------------------------------------------------------------------------------------------------
 
 % RULES FOR SPEECH ACTS
 % Rule for honest communication based on agents' telling what they believe
-honest(p,D,F) :- utter(p,_,D,inform(F)), believe(p(D),F).
+honest(p,F) :- utter(p,_,_,inform(F)), believe(pBelief,F).
 
 % Rule for dishonest communication based on agents' not telling what they believe
-dishonest(p,D,F) :- utter(p,_,D,inform(F)), not believe(p(D),F).
+dishonest(p,F) :- utter(p,_,_,inform(F)), not believe(pBelief,F).
 
 % Rules for telling objective truth based on the environment's belief
-truth(P1,D,F) :- utter(P1,_,D,inform(F)), believe(env,F).
+truth(P1,F) :- utter(P1,_,_,inform(F)), believe(env,F).
 
 % Rules for telling objective falsity based on the environment's belief
-falsity(P1,D,F) :- utter(P1,_,D,inform(F)), not believe(env,F).
+falsity(P1,F) :- utter(P1,_,_,inform(F)), not believe(env,F).
 
 % Rules for telling an objective truth or an erroneous truth
-objective_truth(P1,D,F) :- honest(P1,D,F), truth(P1,D,F).
-erroneous_truth(P1,D,F) :- honest(P1,D,F), falsity(P1,D,F).
+objective_truth(P1,F) :- honest(P1,F), truth(P1,F).
+erroneous_truth(P1,F) :- honest(P1,F), falsity(P1,F).
 
 % Rules for telling an objective lie on
-objective_lie(P1,D,F) :- dishonest(P1,D,F), falsity(P1,D,F).
-erroneous_lie(P1,D,F) :- dishonest(P1,D,F), truth(P1,D,F).
+objective_lie(P1,F) :- dishonest(P1,F), falsity(P1,F).
+erroneous_lie(P1,F) :- dishonest(P1,F), truth(P1,F).
 
 
 %%%%%%%%%%%%%%%  DEONTOLOGISM %%%%%%%%%%%%%%%%%%
@@ -196,15 +192,15 @@ erroneous_lie(P1,D,F) :- dishonest(P1,D,F), truth(P1,D,F).
 maxim(doNotLie;doNotEnableMurder).
 
 % Rule concerning the violation of the maxim against lying
-violated(doNotLie,D) :- dishonest(p,D,F).
+violated(doNotLie) :- dishonest(p,F).
 
 % Rule concerning the violation of the maxim against murder
-violated(doNotEnableMurder,D) :- believe(p(D),D,kill(P2,p,r)).
+violated(doNotEnableMurder) :- believe(pBelief,kill(X,p,Z)).
 
 % Permissibility and impermissibility for deontologism
-impermissible(deontologism,D):- violated(R,D), maxim(R).
-% permissible(deontologism,D):- not impermissible(deontologism,D), plannumber(D), act(D,_).
-permissible(deontologism,D):- not impermissible(deontologism,D), plannumber(D), utter(_,_,D,_).
+impermissible(deontologism):- violated(R), maxim(R).
+% permissible(deontologism):- not impermissible(deontologism), utter(_,_,N,_).
+permissible(deontologism):- not impermissible(deontologism).
 
 
 %%%%%%%%%%%%%%%  PRINCIPIALISM VERSION 1 %%%%%%%%%%%%%%%
@@ -213,48 +209,44 @@ permissible(deontologism,D):- not impermissible(deontologism,D), plannumber(D), 
 principle(doNotLieExcept;doNotEnableMurder).
 
 % Rule stating violation of lying principle in the absence of first exception
-violated(doNotLieExcept,D) :- utter(p,P2,D,inform(F)), not believe(p(D),F),
-                              not exception(utter(p,P2,D,inform(F)),doNotLieExcept).
+violated(doNotLieExcept) :- utter(p,P2,N,inform(F)), not believe(pBelief,F),
+                              not exception(utter(p,P2,N,inform(F)),doNotLieExcept).
 
 % Rule stating that Falangists do not deserve truth
-dontDeserveTruth(P2,D):- believe(p(D),murderer(P2)).
+dontDeserveTruth(X):- believe(pBelief,murderer(X)).
 
 % First exception rule for lies: lying is permitted if truth is not deserved
-exception(utter(P1,P2,D,inform(F)),doNotLieExcept):-utter(P1,P2,D,inform(F)), 
-                                                    dontDeserveTruth(P2,D).
+exception(utter(X,Y,N,inform(F)),doNotLieExcept):-utter(X,Y,N,inform(F)), 
+                                                    dontDeserveTruth(Y).
 
 % Permissibility and impermissibility for principialism1
-impermissible(principialism1,D) :- violated(R,D), principle(R).
+impermissible(principialism1) :- violated(R), principle(R).
 % permissible(principialism1,D) :- not impermissible(principialism1,D), plannumber(D), act(D,_).
-permissible(principialism1,D) :- not impermissible(principialism1,D), plannumber(D), 
-                                 utter(_,_,D,_).
+permissible(principialism1) :- not impermissible(principialism1), 
+                                 utter(_,_,N,_).
 
 
 %%%%%%%%%%%%%%%  UTILITIES CALCULATIONS %%%%%%%%%%%%%%%%%%
 
 % Expected utilities for various physical actions according to consequentialism
-uti(kill(P2,P1,r),-4):-person(P2), person(P1).
-uti(harm1(P1,P2),-2):-person(P2), person(P1).
-uti(harm2(P1,P2),-3):-person(P2), person(P1).
-uti(wrongInfo(P1,P2),0):-person(P2), person(P1).
-uti(help(P),2):-person(P).
-uti(evade_success(P1,P2),0):- person(P1), person(P2).
+uti(kill(X,Y,r),-4):-person(X), person(Y).
+uti(harm(X,Y,R),-3):-person(X), person(Y), reason(R).
 
 % Actions triggering specific utility values
-trigUti(Y,D,F,N) :- uti(F,N), believe(Y,D,F).
+trigUti(Y,F,V) :- uti(F,V), believe(Y,F).
 
 % Calculation of total utility values for agents and actions
 % totalUti(Y,D,T):- T=#sum{N,F:uti(F,N),believe(Y,D,F)}, beliefbase(Y),plannumber(D).
-totalUti(Y,D,T):- T=#sum{N:trigUti(Y,D,F,N)}, beliefbase(Y),plannumber(D).
+totalUti(Y,T):- T=#sum{N:trigUti(Y,F,N)}, beliefbase(Y).
 
 
 
-% #show act/2.
+% #show act/1.
 % #show utter/4.
 % #show believe/2.
 % #show believe/3.
-% #show impermissible/2.
-% #show permissible/2.
+% #show impermissible/1.
+% #show permissible/1.
 % #show violated/2.
 % #show trigUti/4.
 % #show totalUti/3.
