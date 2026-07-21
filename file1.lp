@@ -49,9 +49,11 @@ believe(env, at(r,cemetery)) :-situation(alt1).
 believe(pBelief, at(r,family)):-situation(alt1).
 
 %% Beliefs about hostility
-believe(pBelief,hostile(q,r)) :-situation(alt1).
 believe(env,hostile(q,r)):-situation(alt1).
+believe(env,hostile(q,p)):-situation(alt1).
 believe(env,murderer(q)):-situation(alt1).
+believe(pBelief,hostile(q,r)) :-situation(alt1).
+believe(pBelief,hostile(q,p)) :-situation(alt1).
 believe(pBelief,murderer(q)):-situation(alt1).
 
 %% Beliefs about credible locations
@@ -71,7 +73,9 @@ believe(pBelief, at(r,family)):-situation(alt2).
 
 %% Beliefs about hostility
 believe(pBelief,hostile(q,r)) :-situation(alt2).
+believe(pBelief,hostile(q,p)) :-situation(alt2).
 believe(env,hostile(q,r)):-situation(alt2).
+believe(env,hostile(q,p)):-situation(alt2).
 
 %% Beliefs about credible locations
 believe(pBelief,credible(at(r,madrid), q)):-situation(alt2).
