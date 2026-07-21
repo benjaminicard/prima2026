@@ -14,7 +14,7 @@ situation(base). %mk1
 
 
 % Belief base for the environment's objective facts and for the main agent's beliefs
-round(0..1).
+% round(0..1).
 beliefbase(env;pBelief).
 
 
@@ -153,7 +153,7 @@ believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)),
 reason(uncredibleStatement;refusedToAnswer;uncoveredLie;failedEvade).
 
 % believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
-believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)) 
+believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)) .
 believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)) .
 
 % believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .

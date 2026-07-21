@@ -1,13 +1,6 @@
 % #############  PRINCIPIALISM VERSION 2 ####################  +  #############  CONSEQUENTIALISM VERSIONS 1 AND 2 ####################
 
-% Util predicate to check if two scenarios have the same history up to decision D
-sameHistory(S1,S2,D):-
-    utter(S1,_,_,D,_), utter(S2,_,_,D,_), S1!=S2,
-    {act(S1, D2, A2) : D2<D, not act(S2, D2, A2)}0,
-    {act(S2, D3, A3) : D3<D, not act(S1, D3, A3)}0,
-    {utter(S1,X1,Y1,D4,F1) : D4<D, not utter(S2,X1,Y1,D4,F1)}0,
-    {utter(S2,X2,Y2,D5,F2) : D5<D, not utter(S1,X2,Y2,D5,F2)}0.
-    
+
 
 
 % PRINCIPIALISM VERSION 2
@@ -50,7 +43,7 @@ permissible(S,consequentialism1) :- not impermissible(S,consequentialism1), utte
 
 
 % Permissibility and impermissibility for consequentialism2
-impermissible(S,consequentialism2) :- totalUti(S,env,N1), totalUti2(S2,env,N2), N2>N1.
+impermissible(S,consequentialism2) :- totalUti(S,env,N1), totalUti(S2,env,N2), N2>N1.
 permissible(S,consequentialism2) :- not impermissible(S,consequentialism2), utter(S,_,_,_,_).
 
 
