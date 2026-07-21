@@ -5,13 +5,13 @@ with open('file1.lp', 'r') as f:
     program1 = f.read()
 with open('file2.lp', 'r') as f:
     program2 = f.read()
-    
+
 # Function to convert answer sets to valid ASP facts
 def answer_set_to_facts(answer_set,n,first):
     formatted_facts = []
     transmit= [("believe",2),("believe",3),("beliefbase",1), ("principle",1)]
-    augment = [("utter",4),("act",2),("totalUti",3),("permissible",2), ("impermissible",2),('objective_lie',3),('objective_truth',3),('erroneous_lie',3),('erroneous_truth',3),('trigUti',4)]
-    renamedAug = {("violated",2):"locally_violated"}
+    augment = [("utter",4),("act",1),("totalUti",2),("permissible",1), ("impermissible",1),('objective_lie',2),('objective_truth',2),('erroneous_lie',2),('erroneous_truth',2),('trigUti',3)]
+    renamedAug = {("violated",1):"locally_violated"}
     for fact in answer_set:
         # Handle complex terms
         name = fact[0]
@@ -44,6 +44,7 @@ for n, answer_set in enumerate(answers_program1, start=1):
 
 combined_program=combined_program+"\n"+program2
 
+open('combined_program.lp', 'w').write(combined_program)
 
 answers_program2 = ASP(combined_program)
 
@@ -77,18 +78,18 @@ def get_perm(all_facts,act):
   #construit un dictionnaire qui pour une action donnée fournis les permissions, la règle associée ainsi que le degré
   res = dict()
   scenario = act[1][0]
-  degre = act[1][-2]
-  res["degre"] = degre
   facts = get_pred(all_facts, scenario)
+
   for fact in facts:
-    if fact[0]=='permissible' and fact[1][2]==degre:
+    if fact[0]=='permissible':
       res[fact[1][1]]= 'perm'
-    elif fact[0]=='impermissible' and fact[1][2]==degre:
+    elif fact[0]=='impermissible' :
       res[fact[1][1]]= 'imp'
-    elif fact[0] in ["erroneous_truth", "erroneous_lie", "objective_truth", "objective_lie"] and fact[1][-1] in act[1][-1] and fact[1][-2]==act[1][-2]:
+    elif fact[0] in ["erroneous_truth", "erroneous_lie", "objective_truth", "objective_lie"] and fact[1][-1] in act[1][-1] :
       res["rule"] = fact[0]
   if "rule" not in res:
     res["rule"] = "----"
+
   return res
 
 facts = get_all_facts(answers_program2)
@@ -99,36 +100,35 @@ def show_scenario(all_facts,scenario):
   mk = f"# Scénario {scenario} \n"
   facts = get_pred(all_facts,scenario)
   acts = get_act(facts)
-
   clean_act = [act[1][-1] for act in acts.values()]
 
+  
   line = '## Actions :'
   for a in clean_act:
-    if  a!='attempt_evade(p,q)' :
+    if  a!='evade(p,q)' :
       line+= f"{a}"
   mk+=line+"\n"
-  mk += f" ## Attempt evade : {'attempt_evade(p,q)' in clean_act} \n"
+  mk += f" ## Attempt evade : {'evade(p,q)' in clean_act} \n"
   mk+= "\n"
-  mk += "| Degre | Act | Rule |deontologism | principialism1 | principialism2 | consequentialism1 | consequentialism2 |\n"
-  mk += "| :---------------:| :---------------: | :---------------: | :-----: | :-----: | :-----: | :-----: | :-----: |\n"
+  mk += "| Act | Rule |deontologism | principialism1 | principialism2 | consequentialism1 | consequentialism2 |\n"
+  mk += "| :---------------: | :---------------: | :-----: | :-----: | :-----: | :-----: | :-----: |\n"
 
   for i in range(len(acts)):
-    if acts[i][1][-1]=='attempt_evade(p,q)' or acts[i][1][-1]=='silence(p,q)':
+    if acts[i][1][-1]=='evade(p,q)' or acts[i][1][-1]=='silence(p,q,0)':
       continue
     perm = get_perm(facts,acts[i])
-    mk += f"| {perm['degre']} | {acts[i][1][-1]} | {perm['rule']} | {perm['deontologism']} | {perm['principialism1']} | {perm['principialism2']} | {perm['consequentialism1']} | {perm['consequentialism2']} |\n"
+    mk += f"| {acts[i][1][-1]} | {perm['rule']} | {perm['deontologism']} | {perm['principialism1']} | {perm['principialism2']} | {perm['consequentialism1']} | {perm['consequentialism2']} |\n"
+  # display(Markdown(mk))
   return mk
 
 
 mk3 = ""
-for i in range(1,10):
+for i in range(1,6):
   mk3 +=show_scenario(facts,"s"+str(i)) +"\n"
 display(Markdown(mk3))
 
-with open('output.md', 'w') as f:
-    f.write(mk3)
   
 
 with open('output.md', 'w') as f:
     f.write(mk3)
-    
+  

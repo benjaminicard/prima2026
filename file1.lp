@@ -94,19 +94,6 @@ believe(pBelief, utter(q,p,0,query(at(r)))).
 
 0{act(evade(p,Y))}1:- believe(pBelief,check(Y,X,madrid,r)).
 
-% %unanticipated reaction
-% 1{utter(p,q,D,inform(at(r,L))): location(L),believe(p(D+1),credible(at(r,L),q));
-%   act(D+1,silence(p,q))}1 :- believe(env,D,utter(q,p,D,query(at(r)))),
-%                              not believe(p(D),D,utter(q,p,D,query(at(r)))),
-%                              plannumber(D).
-% %Decision Inertia
-% act(D+1,A):- act(D,A), not -act(D+1,A), plannumber(D+1).
-
-
-% -act(D+1,attempt_evade(p,Y)):- act(D,attempt_evade(p,Y)), person(Y),
-%                                not believe(p(D+1),D+1,check(Y,madrid,r)).
-
-
 
 % ----------------------------------------------------------------------------------------------------------------
 
@@ -114,39 +101,12 @@ believe(pBelief, utter(q,p,0,query(at(r)))).
 % Rule for checking a location
 believe(P1,check(X,Y,L,Z)) :- utter(Y,X,N, inform(at(Z,L))), believe(P1,credible(at(r,L), X)).
 
-
-% % Rule for reasking a question based on non-credible information
-% believe(Y,D+1,utter(P2,P1,D+1,query(at(r)))) :- utter(P1,P2,D,inform(at(r,L))), 
-%                                                     not believe(Y,credible(at(r,L), P2)), 
-%                                                     plannumber(D),plannumber(D+1), beliefbase(Y).
-
 % Rule for evasion
 believe(X,escaped(p,Y)) :- act(evade(p,Y)), believe(X,check(Y,madrid,r)).
 
 % Rule for killing
 believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)), 
                               believe(P1,murderer(X)).
-
-
-% % Rule for agents loosing patience (first condition)
-% believe(Y,D,patienceLost(P2, P1)) :- utter(P1,P2,D,inform(at(r,L))), 
-%                                      not believe(Y,credible(at(r,L), P2)), 
-%                                      believe(Y,hostile(P2)), plannumber(D).
-
-% % Rule for agents loosing patience (second condition)
-% believe(Y,D,patienceLost(P2, P1)) :- act(D,silence(P1, P2)), believe(Y,hostile(P2)).
-
-% % Rule for wrong information provided
-% believe(Y,D,wrongInfo(P2, P1)) :- believe(Y,D,check(P2, L, r)), 
-%                                   not believe(Y,at(r,L)), person(P1).
-
-% % Rule for an agent being harmed based on another agent loosing patience
-% believe(Y,D,harm1(P2, P1)) :- believe(Y,D,patienceLost(P2, P1)).
-
-% % Rule for an agent being harmed based on hostility and another agent providing wrong information
-% believe(Y,D,harm2(P2, P1)) :- believe(Y,D,wrongInfo(P2, P1)), believe(Y,hostile(P2)), 
-%                               not believe(Y,D,evade_success(P1,P2)).
-
 
 
 % Rules for an agent being harmed based on differents reasons
@@ -239,27 +199,3 @@ trigUti(Y,F,V) :- uti(F,V), believe(Y,F).
 % Calculation of total utility values for agents and actions
 % totalUti(Y,D,T):- T=#sum{N,F:uti(F,N),believe(Y,D,F)}, beliefbase(Y),plannumber(D).
 totalUti(Y,T):-  beliefbase(Y), T=#sum{V,F:trigUti(Y,F,V)}.
-
-
-% #show reason/1.
-% #show act/1.
-% #show utter/4.
-% #show believe/2.
-% #show believe/3.
-% #show impermissible/1.
-% #show permissible/1.
-% #show violated/2.
-% #show trigUti/3.
-% #show totalUti/2.
-% #show objective_lie/3.
-% #show objective_truth/3.
-% #show erroneous_lie/3.
-% #show erroneous_truth/3.
-% #show beliefbase/1.
-% #show principle/1.
-% #show uti/2.
-% #show nbAsk/1.
-% #show truth/3.
-% #show falsity/3.
-% #show honest/3.
-% #show dishonest/3.
