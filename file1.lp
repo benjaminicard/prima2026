@@ -15,7 +15,7 @@ situation(base). %mk1
 
 % Belief base for the environment's objective facts and for the main agent's beliefs
 round(0..1).
-beliefbase(env,pBelief).
+beliefbase(env;pBelief).
 
 
 % Description of situation base (current situation)
@@ -150,13 +150,14 @@ believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)),
 
 
 % Rules for an agent being harmed based on differents reasons
-reason(uncredibleStatement,refusedToAnswer,uncoveredLie,failedEvade).
+reason(uncredibleStatement;refusedToAnswer;uncoveredLie;failedEvade).
 
-believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
-
+% believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
+believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)) 
 believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)) .
 
-believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .
+% believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .
+believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(env, at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)) .
 
 believe(P1, harm(X,Y,failedEvade)):-  act(evade(Y,X)), not believe(P1, check(X,_,madrid,_)), beliefbase(P1).
 
@@ -237,10 +238,10 @@ trigUti(Y,F,V) :- uti(F,V), believe(Y,F).
 
 % Calculation of total utility values for agents and actions
 % totalUti(Y,D,T):- T=#sum{N,F:uti(F,N),believe(Y,D,F)}, beliefbase(Y),plannumber(D).
-totalUti(Y,T):- T=#sum{N:trigUti(Y,F,N)}, beliefbase(Y).
+totalUti(Y,T):-  beliefbase(Y), T=#sum{V,F:trigUti(Y,F,V)}.
 
 
-
+% #show reason/1.
 % #show act/1.
 % #show utter/4.
 % #show believe/2.
@@ -248,8 +249,8 @@ totalUti(Y,T):- T=#sum{N:trigUti(Y,F,N)}, beliefbase(Y).
 % #show impermissible/1.
 % #show permissible/1.
 % #show violated/2.
-% #show trigUti/4.
-% #show totalUti/3.
+% #show trigUti/3.
+% #show totalUti/2.
 % #show objective_lie/3.
 % #show objective_truth/3.
 % #show erroneous_lie/3.

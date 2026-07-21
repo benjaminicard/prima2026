@@ -46,12 +46,12 @@ permissible(S,consequentialism1) :- not impermissible(S,consequentialism1), utte
 
 % CONSEQUENTIALISM VERSION 2
 % Calculation of total utility based on sums of total utilities of each action
-totalUti2(S,Y,D,T) :- T=#sum{N,D2:totalUti(S,Y,D2,N),D2<=D}, beliefbase(Y),utter(S,_,_,D,_).
+% totalUti2(S,Y,D,T) :- T=#sum{N,D2:totalUti(S,Y,D2,N),D2<=D}, beliefbase(Y),utter(S,_,_,D,_).
 
 
 % Permissibility and impermissibility for consequentialism2
-impermissible(S,consequentialism2) :- totalUti2(S,env,D,N1), totalUti2(S2,env,D,N2), N2>N1, sameHistory(S,S2,D).
-permissible(S,consequentialism2) :- not impermissible(S,consequentialism2,D), utter(S,_,_,D,_).
+impermissible(S,consequentialism2) :- totalUti(S,env,N1), totalUti2(S2,env,N2), N2>N1.
+permissible(S,consequentialism2) :- not impermissible(S,consequentialism2), utter(S,_,_,_,_).
 
 
 

@@ -1,52 +1,81 @@
 %AS1
-believe(pBelief,credible(at(r,cemetery),q)).
-permissible(s1,deontologism).
-act(s1,silence(p,q,0)).
-believe(pBelief,at(r,family)).
-believe(env,hostile(q,r)).
-believe(env,harm(q,p,refusedToAnswer)).
-believe(pBelief,hostile(q,r)).
-believe(env,credible(at(r,family),q)).
-believe(env,murderer(q)).
-believe(pBelief,hostile(q,p)).
-believe(pBelief,harm(q,p,refusedToAnswer)).
-believe(env,utter(q,p,0,query(at(r)))).
-believe(env,hostile(q,p)).
-believe(env,credible(at(r,cemetery),q)).
-principle(doNotEnableMurder).
 principle(doNotLieExcept).
-believe(pBelief,utter(q,p,0,query(at(r)))).
-believe(env,at(r,cemetery)).
+objective_lie(s1,p,at(r,madrid)).
+believe(env,hostile(q,r)).
+trigUti(s1,pBelief,harm(q,p,uncoveredLie),-3).
+believe(env,credible(at(r,family),q)).
+permissible(s1,principialism1).
+totalUti(s1,env,-3).
+trigUti(s1,pBelief,harm(q,p,uncredibleStatement),-3).
+believe(env,hostile(q,p)).
+totalUti(s1,pBelief,-6).
+believe(pBelief,check(q,p,madrid,r)).
+believe(pBelief,harm(q,p,uncredibleStatement)).
+believe(env,credible(at(r,cemetery),q)).
+utter(s1,p,q,0,inform(at(r,madrid))).
 believe(pBelief,credible(at(r,family),q)).
+believe(pBelief,utter(q,p,0,query(at(r)))).
 believe(pBelief,credible(at(r,madrid),q)).
+believe(pBelief,credible(at(r,cemetery),q)).
+impermissible(s1,deontologism).
+believe(env,at(r,cemetery)).
+locally_violated(s1,doNotLie).
+believe(pBelief,harm(q,p,uncoveredLie)).
+beliefbase(env).
+believe(pBelief,at(r,family)).
+believe(env,murderer(q)).
+beliefbase(pBelief).
+principle(doNotEnableMurder).
+believe(pBelief,hostile(q,r)).
 believe(pBelief,murderer(q)).
+believe(pBelief,hostile(q,p)).
+trigUti(s1,env,harm(q,p,uncredibleStatement),-3).
+believe(env,utter(q,p,0,query(at(r)))).
+believe(env,harm(q,p,uncredibleStatement)).
 %AS2
-utter(s2,p,q,0,inform(at(r,family))).
-locally_violated(s2,doNotEnableMurder).
+objective_lie(s2,p,at(r,madrid)).
+trigUti(s2,pBelief,harm(q,p,uncoveredLie),-3).
+permissible(s2,principialism1).
+trigUti(s2,pBelief,harm(q,p,uncredibleStatement),-3).
+totalUti(s2,pBelief,-6).
+utter(s2,p,q,0,inform(at(r,madrid))).
 impermissible(s2,deontologism).
-erroneous_truth(s2,p,at(r,family)).
-trigUti(s2,pBelief,kill(q,p,r),-4).
-impermissible(s2,principialism1).
+locally_violated(s2,doNotLie).
+act(s2,evade(p,q)).
+trigUti(s2,env,harm(q,p,uncredibleStatement),-3).
+trigUti(s2,env,harm(q,p,failedEvade),-3).
+totalUti(s2,env,-6).
 %AS3
+permissible(s3,principialism1).
+trigUti(s3,pBelief,harm(q,p,uncredibleStatement),-3).
 erroneous_lie(s3,p,at(r,cemetery)).
+totalUti(s3,env,-7).
+totalUti(s3,pBelief,-3).
+impermissible(s3,deontologism).
 locally_violated(s3,doNotLie).
 utter(s3,p,q,0,inform(at(r,cemetery))).
 trigUti(s3,env,kill(q,p,r),-4).
-impermissible(s3,deontologism).
-permissible(s3,principialism1).
+trigUti(s3,env,harm(q,p,uncredibleStatement),-3).
 %AS4
-locally_violated(s4,doNotLie).
-impermissible(s4,deontologism).
-permissible(s4,principialism1).
-objective_lie(s4,p,at(r,madrid)).
-utter(s4,p,q,0,inform(at(r,madrid))).
+act(s4,silence(p,q,0)).
+trigUti(s4,env,harm(q,p,refusedToAnswer),-3).
+totalUti(s4,env,-3).
+totalUti(s4,pBelief,-3).
+permissible(s4,deontologism).
+trigUti(s4,pBelief,harm(q,p,refusedToAnswer),-3).
 %AS5
-locally_violated(s5,doNotLie).
+impermissible(s5,principialism1).
+erroneous_truth(s5,p,at(r,family)).
+trigUti(s5,pBelief,harm(q,p,uncoveredLie),-3).
+trigUti(s5,pBelief,harm(q,p,uncredibleStatement),-3).
+utter(s5,p,q,0,inform(at(r,family))).
 impermissible(s5,deontologism).
-permissible(s5,principialism1).
-act(s5,evade(p,q)).
-objective_lie(s5,p,at(r,madrid)).
-utter(s5,p,q,0,inform(at(r,madrid))).
+trigUti(s5,env,harm(q,p,uncoveredLie),-3).
+totalUti(s5,pBelief,-10).
+trigUti(s5,pBelief,kill(q,p,r),-4).
+trigUti(s5,env,harm(q,p,uncredibleStatement),-3).
+totalUti(s5,env,-6).
+locally_violated(s5,doNotEnableMurder).
 
 % #############  PRINCIPIALISM VERSION 2 ####################  +  #############  CONSEQUENTIALISM VERSIONS 1 AND 2 ####################
 
@@ -96,16 +125,16 @@ permissible(S,consequentialism1) :- not impermissible(S,consequentialism1), utte
 
 % CONSEQUENTIALISM VERSION 2
 % Calculation of total utility based on sums of total utilities of each action
-totalUti2(S,Y,D,T) :- T=#sum{N,D2:totalUti(S,Y,D2,N),D2<=D}, beliefbase(Y),utter(S,_,_,D,_).
+% totalUti2(S,Y,D,T) :- T=#sum{N,D2:totalUti(S,Y,D2,N),D2<=D}, beliefbase(Y),utter(S,_,_,D,_).
 
 
 % Permissibility and impermissibility for consequentialism2
-impermissible(S,consequentialism2) :- totalUti2(S,env,D,N1), totalUti2(S2,env,D,N2), N2>N1, sameHistory(S,S2,D).
-permissible(S,consequentialism2) :- not impermissible(S,consequentialism2,D), utter(S,_,_,D,_).
+impermissible(S,consequentialism2) :- totalUti(S,env,N1), totalUti2(S2,env,N2), N2>N1.
+permissible(S,consequentialism2) :- not impermissible(S,consequentialism2), utter(S,_,_,_,_).
 
 
 
-%#show totalUti/4.
+% #show totalUti/3.
 %#show totalUti2/4.
 %#show locally_violated/3.
 %#show violated/3.
