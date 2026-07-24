@@ -49,86 +49,123 @@ open('combined_program.lp', 'w').write(combined_program)
 answers_program2 = ASP(combined_program)
 
 def get_all_facts(answer_set):
-  #recupere tous les faits de l'answer set
+  # récupère tous les faits de l'answer set
   facts = []
   for answer in answer_set:
     for fact in answer:
       facts.append(fact)
   return facts
 
+def get_args(fact):
+  # normalise les arguments d'un fait clyngor en tuple
+  return fact[1] if isinstance(fact[1], tuple) else (fact[1],)
+
 def get_pred(facts, scenario):
-  #recupere les faits liés à un scénario
+  # récupère les faits liés à un scénario
   res = []
   for fact in facts:
-    if scenario in fact[1]:
+    args = get_args(fact)
+    if len(args) > 0 and args[0] == scenario:
       res.append(fact)
   return res
 
-def get_act(facts):
-  #recupère les prédicats d'action d'un ensemble de fait
-  res = dict()
-  i = 0
-  for fact in facts:
-    if fact[0] == "act" or fact[0]=="utter":
-      res[i]=fact
-      i+=1
+def get_acts(facts_s):
+  # récupère les actes 
+  res = []
+  for fact in facts_s:
+    if fact[0] in ("utter", "act"):
+      args = get_args(fact)
+      act_str = args[-1]
+      if act_str != "evade(p,q)":
+        res.append(act_str)
   return res
 
-def get_perm(all_facts,act):
-  #construit un dictionnaire qui pour une action donnée fournis les permissions, la règle associée ainsi que le degré
-  res = dict()
-  scenario = act[1][0]
-  facts = get_pred(all_facts, scenario)
+def has_evade(facts_s):
+  # indique si une tentative d'évasion a eu lieu dans ce scénario
+  for fact in facts_s:
+    if fact[0] == "act":
+      args = get_args(fact)
+      if args[-1] == "evade(p,q)":
+        return True
+  return False
 
-  for fact in facts:
-    if fact[0]=='permissible':
-      res[fact[1][1]]= 'perm'
-    elif fact[0]=='impermissible' :
-      res[fact[1][1]]= 'imp'
-    elif fact[0] in ["erroneous_truth", "erroneous_lie", "objective_truth", "objective_lie"] and fact[1][-1] in act[1][-1] :
+def get_perm(facts_s, act_str):
+  res = dict()
+  for fact in facts_s:
+    args = get_args(fact)
+    if fact[0] == 'permissible':
+      res[args[-1]] = 'perm'
+    elif fact[0] == 'impermissible':
+      res[args[-1]] = 'imp'
+    elif fact[0] in ["erroneous_truth", "erroneous_lie", "objective_truth", "objective_lie"] and args[-1] in act_str:
       res["rule"] = fact[0]
-  if "rule" not in res:
-    res["rule"] = "----"
-
+  res.setdefault("rule", "----")
+  for formalism in ["deontologism", "principialism1", "principialism2", "consequentialism1", "consequentialism2"]:
+    res.setdefault(formalism, "----")
   return res
+
+def get_total_uti(facts_s, agent):
+  # récupère l'utilité totale pour un agent (pBelief ou env) dans un scénario
+  for fact in facts_s:
+    if fact[0] == 'totalUti':
+      args = get_args(fact)
+      if args[1] == agent:
+        return args[-1]
+  return "----"
+
+def get_events(facts_s, agent, include_evade=False):
+  # récupère les événements (kill/harm) déclenchés selon les croyances d'un agent
+  events = []
+  for fact in facts_s:
+    if fact[0] == 'trigUti':
+      args = get_args(fact)
+      if args[1] == agent:
+        events.append(str(args[2]))
+  if include_evade and has_evade(facts_s):
+    events.append("evade(p,q)")
+  return events
 
 facts = get_all_facts(answers_program2)
 
+def build_big_table(all_facts, scenarios):
+  header = ("| Scenario | Act | Rule | deontologism | principialism1 | principialism2 "
+            "| consequentialism1 | consequentialism2 | attempt evade "
+            "| uti (pBelief) | uti (env) "
+            "| events (pBelief) | events (env) |\n")
+  sep = "|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|\n"
+  mk = header + sep
 
-def show_scenario(all_facts,scenario):
-  #fonction d'affichage du markdown
-  mk = f"# Scénario {scenario} \n"
-  facts = get_pred(all_facts,scenario)
-  acts = get_act(facts)
-  clean_act = [act[1][-1] for act in acts.values()]
+  for scenario in scenarios:
+    facts_s = get_pred(all_facts, scenario)
+    acts = get_acts(facts_s)
+    evade = "True" if has_evade(facts_s) else "False"
+    total_pbelief = get_total_uti(facts_s, "pBelief")
+    total_env = get_total_uti(facts_s, "env")
+    events_pbelief = get_events(facts_s, "pBelief", include_evade=True)
+    events_env = get_events(facts_s, "env", include_evade=False)
+    ev_pbelief_str = ", ".join(events_pbelief) if events_pbelief else "----"
+    ev_env_str = ", ".join(events_env) if events_env else "----"
 
-  
-  line = '## Actions :'
-  for a in clean_act:
-    if  a!='evade(p,q)' :
-      line+= f"{a}"
-  mk+=line+"\n"
-  mk += f" ## Attempt evade : {'evade(p,q)' in clean_act} \n"
-  mk+= "\n"
-  mk += "| Act | Rule |deontologism | principialism1 | principialism2 | consequentialism1 | consequentialism2 |\n"
-  mk += "| :---------------: | :---------------: | :-----: | :-----: | :-----: | :-----: | :-----: |\n"
-
-  for i in range(len(acts)):
-    if acts[i][1][-1]=='evade(p,q)' or acts[i][1][-1]=='silence(p,q,0)':
+    if not acts:
+      mk += (f"| {scenario} | ---- | ---- | ---- | ---- | ---- | ---- | ---- | {evade} "
+             f"| {total_pbelief} | {total_env} | {ev_pbelief_str} | {ev_env_str} |\n")
       continue
-    perm = get_perm(facts,acts[i])
-    mk += f"| {acts[i][1][-1]} | {perm['rule']} | {perm['deontologism']} | {perm['principialism1']} | {perm['principialism2']} | {perm['consequentialism1']} | {perm['consequentialism2']} |\n"
-  # display(Markdown(mk))
+
+    for act_str in acts:
+      perm = get_perm(facts_s, act_str)
+      mk += (f"| {scenario} | {act_str} | {perm['rule']} | {perm['deontologism']} "
+             f"| {perm['principialism1']} | {perm['principialism2']} "
+             f"| {perm['consequentialism1']} | {perm['consequentialism2']} "
+             f"| {evade} | {total_pbelief} | {total_env} "
+             f"| {ev_pbelief_str} | {ev_env_str} |\n")
   return mk
 
-
-mk3 = ""
-for i in range(1,6):
-  mk3 +=show_scenario(facts,"s"+str(i)) +"\n"
-display(Markdown(mk3))
+scenarios = [f"s{i}" for i in range(1, 6)]
+mk_big = build_big_table(facts, scenarios)
+display(Markdown(mk_big))
 
   
 
 with open('output.md', 'w') as f:
-    f.write(mk3)
+    f.write(mk_big)
   

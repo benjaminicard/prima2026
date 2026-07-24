@@ -106,7 +106,8 @@ believe(pBelief, utter(q,p,0,query(at(r)))).
 believe(P1,check(X,Y,L,Z)) :- utter(Y,X,N, inform(at(Z,L))), believe(P1,credible(at(r,L), X)).
 
 % Rule for evasion
-believe(X,escaped(p,Y)) :- act(evade(p,Y)), believe(X,check(Y,madrid,r)).
+% believe(P1,escaped(p,Y)) :- act(evade(p,Y)), believe(P1,check(Y,madrid,r)).
+believe(P1,escaped(Y,X)) :- act(evade(Y,X)), believe(P1,check(X,Y,madrid,Z)).
 
 % Rule for killing
 believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)), 
@@ -117,11 +118,13 @@ believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)),
 reason(uncredibleStatement;refusedToAnswer;uncoveredLie;failedEvade).
 
 % believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
-believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)) .
-believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)) .
+believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)).
+believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)), not believe(P1,escaped(p,Y)) .
 
 % believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .
-believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(env, at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)) .
+% believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(env, at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)), not believe(P1,escaped(Y,X)) .
+
+believe(P1, harm(X,Y, uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(P1,at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)), not believe(P1,escaped(Y,X)) .
 
 believe(P1, harm(X,Y,failedEvade)):-  act(evade(Y,X)), not believe(P1, check(X,_,madrid,_)), beliefbase(P1).
 
