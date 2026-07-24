@@ -32,40 +32,31 @@ Ethical dilemmas extend beyond physical actions to **verbal** actions—lying, t
 
 ## Installation
 
-### Prerequisites
-- Python **3.8+**
-- A working Clingo (comes via `clyngor-with-clingo`, or install system-wide)
-  - macOS (Homebrew): `brew install clingo`
-  - Ubuntu/Debian: `sudo apt-get install clingo`
+Python 3.13 required (pinned in `pyproject.toml`).
 
-### Install via pip
 ```bash
-python -m pip install --upgrade pip
-python -m pip install clingo
-python -m pip install clyngor-with-clingo
+# With uv (recommended)
+uv sync
+
+# Or with pip
+pip install clingo clyngor clyngor-with-clingo ipython
 ```
 
-> **Note:** If running outside notebooks, ignore any notebook “bang” lines (e.g., `!pip install ...`).
 
 ## Usage
 
-### Option A — Run as a script
-```bash
-python prima2026_asp.py
-```
-
-### Option B — Jupyter / Colab
-Open the file in a notebook cell and run. The inline Markdown tables will render in the notebook.
-
-### Selecting a scenario
-Inside `prima2026_asp.py`, scenarios are toggled in the ASP **`program1`** string:
+The active scenario (`base`, `alt1`, or `alt2`) is chosen in `file1.lp` by commenting/uncommenting the corresponding `situation(...)` line:
 ```prolog
-% Current and potential situations
-situation(s1).   % <- active by default
-%situation(s2).
-%situation(s3).
+situation(base). %mk1
+% situation(alt1). %mk2
+% situation(alt2). %mk3
 ```
-Uncomment the one you want (only one `situation/1` should be active at a time), then rerun.
+
+```bash
+uv run main.py        # generates combined_program.lp and output.md
+```
+Or open `main.ipynb` for an interactive run with inline table display.
+
 
 ## Interpreting the Output
 
@@ -80,9 +71,12 @@ This lets you contrast, for example, how a **truthful utterance intended as a li
 
 ## Code Structure
 
-- **`prima2026_asp.py`** — Single self-contained script that:
-  - Declares the **ASP programs** (scenario facts; honesty/truth predicates; action consequences; maxims/principles; utility aggregation; counterfactual comparison).
-  - Runs the solver and prints structured results.
+- **`file1.lp`** — ASP program 1: facts, scenarios, actions/speech acts, deontologism, principialism v1.
+- **`file2.lp`** — ASP program 2: principialism v2 (counterfactual), consequentialism v1/v2.
+- **`main.py`** — orchestration: solves `file1.lp`, merges the answer sets with `file2.lp` (→ `combined_program.lp`), builds the permissibility tables (→ `output.md`).
+- **`main.ipynb`** — same pipeline as an interactive notebook.
+- **`combined_program.lp`**, **`output.md`** — auto-generated files, do not edit by hand.
+- **`pyproject.toml` / `uv.lock`** — locked dependencies managed via `uv`.
 
 ### Key Helpers (Python)
 - `answer_set_to_facts(answer)`: normalize one answer set into a Python fact list.  
