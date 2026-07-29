@@ -60,7 +60,7 @@ Or open `main.ipynb` for an interactive run with inline table display.
 
 ## Interpreting the Output
 
-The solver enumerates answer sets and then prints a **per-scenario table** with, for each candidate act (e.g., `tell(p, at(r, cemetery), f)`; `silence(...)`):
+The solver enumerates answer sets and then prints a **per-scenario table** with, for each candidate act (e.g., `utter(p,q,0,inform(at(r,cemetery)))`; `act(silence(p,q,0))`):
 
 - Whether it is **permissible/impermissible** under:  
   **Deontologism**, **Principialism v1**, **Principialism v2**, **Consequentialism 1** (e.g., immediate/expected utility), **Consequentialism 2** (e.g., cumulative/realized utility).
@@ -80,8 +80,11 @@ This lets you contrast, for example, how a **truthful utterance intended as a li
 
 ### Key Helpers (Python)
 - `answer_set_to_facts(answer)`: normalize one answer set into a Python fact list.  
-- `get_all_facts(answers)`: collect/merge facts for reporting.  
+- `get_args(fact)`: normalizes the arguments of a Clyngor fact in tuple.
 - `get_pred(all_facts, scenario)`: filter facts for a chosen `s1|s2|s3`.  
-- `get_act(facts)`: enumerate candidate actions/decisions.  
+- `get_act(facts)`: retrieves the actions .  
+- `has_evade(facts_s)`: indicates whether an escape attempt has taken place.
 - `get_perm(facts, act)`: compute per-theory permissibility for a given action.  
-- `show_scenario(all_facts, scenario)`: render a Markdown table summarizing the scenario’s actions and permissibility across theories.
+- `get_total_uti(facts_s, agent)`:  recovers the total utility for an agent (pBelief or env) in a scenario.
+- ̀`get_events(facts_s, agent, include_evade=False)`: retrieves events (kill/harm) triggered according to an agent’s beliefs.
+- `build_big_table(all_facts, scenarios)`: build a markdown table for results visualization.

@@ -1,8 +1,5 @@
 % #############  PRINCIPIALISM VERSION 2 ####################  +  #############  CONSEQUENTIALISM VERSIONS 1 AND 2 ####################
 
-
-
-
 % PRINCIPIALISM VERSION 2
 % Rule for comparing decisions based on counterfactual comparison
 counterfactual(S1, S2, inform(at(r, L1))) :-

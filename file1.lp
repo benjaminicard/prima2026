@@ -14,7 +14,7 @@ situation(base). %mk1
 
 
 % Belief base for the environment's objective facts and for the main agent's beliefs
-% round(0..1).
+round(0..1).
 beliefbase(env;pBelief).
 
 
@@ -119,10 +119,8 @@ reason(uncredibleStatement;refusedToAnswer;uncoveredLie;failedEvade).
 
 % believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,F), not believe(P1, credible(F,X)), believe(P1,hostile(X,Y))  .
 believe(P1, harm(X,Y,uncredibleStatement)):- utter(Y,X,N,inform(at(Z,L))), not believe(P1, credible(at(Z,L),X)), believe(P1,hostile(X,Y)).
-believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)), not believe(P1,escaped(p,Y)) .
 
-% believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L,Z)), not believe(env, at(Z,L)) ,believe(P1,hostile(X,Y)) .
-% believe(P1, harm(X,Y,uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(env, at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)), not believe(P1,escaped(Y,X)) .
+believe(P1, harm(X,Y,refusedToAnswer)):- act(silence(Y,X,N)), believe(P1, hostile(X,Y)), not believe(P1,escaped(p,Y)) .
 
 believe(P1, harm(X,Y, uncoveredLie)):- believe(P1,check(X,Y,L1,Z)), believe(P1,at(Z,L2)),L1!=L2 ,believe(P1,hostile(X,Y)), not believe(P1,escaped(Y,X)) .
 
@@ -204,5 +202,4 @@ uti(harm(X,Y,R),-3):-person(X), person(Y), reason(R).
 trigUti(Y,F,V) :- uti(F,V), believe(Y,F).
 
 % Calculation of total utility values for agents and actions
-% totalUti(Y,D,T):- T=#sum{N,F:uti(F,N),believe(Y,D,F)}, beliefbase(Y),plannumber(D).
 totalUti(Y,T):-  beliefbase(Y), T=#sum{V,F:trigUti(Y,F,V)}.

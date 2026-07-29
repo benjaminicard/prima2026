@@ -49,7 +49,7 @@ open('combined_program.lp', 'w').write(combined_program)
 answers_program2 = ASP(combined_program)
 
 def get_all_facts(answer_set):
-  # récupère tous les faits de l'answer set
+  # retrieves all the facts from the answer set
   facts = []
   for answer in answer_set:
     for fact in answer:
@@ -57,11 +57,11 @@ def get_all_facts(answer_set):
   return facts
 
 def get_args(fact):
-  # normalise les arguments d'un fait clyngor en tuple
+  # normalizes the arguments of a Clyngor fact in tuple
   return fact[1] if isinstance(fact[1], tuple) else (fact[1],)
 
 def get_pred(facts, scenario):
-  # récupère les faits liés à un scénario
+  # retrieves the facts related to a scenario
   res = []
   for fact in facts:
     args = get_args(fact)
@@ -70,7 +70,7 @@ def get_pred(facts, scenario):
   return res
 
 def get_acts(facts_s):
-  # récupère les actes 
+  # retrieves the acts 
   res = []
   for fact in facts_s:
     if fact[0] in ("utter", "act"):
@@ -81,7 +81,7 @@ def get_acts(facts_s):
   return res
 
 def has_evade(facts_s):
-  # indique si une tentative d'évasion a eu lieu dans ce scénario
+  #  indicates whether an escape attempt has taken place 
   for fact in facts_s:
     if fact[0] == "act":
       args = get_args(fact)
@@ -105,7 +105,7 @@ def get_perm(facts_s, act_str):
   return res
 
 def get_total_uti(facts_s, agent):
-  # récupère l'utilité totale pour un agent (pBelief ou env) dans un scénario
+  # recovers the total utility for an agent (pBelief or env) in a scenario
   for fact in facts_s:
     if fact[0] == 'totalUti':
       args = get_args(fact)
@@ -114,7 +114,7 @@ def get_total_uti(facts_s, agent):
   return "----"
 
 def get_events(facts_s, agent, include_evade=False):
-  # récupère les événements (kill/harm) déclenchés selon les croyances d'un agent
+  # retrieves events (kill/harm) triggered according to an agent’s beliefs
   events = []
   for fact in facts_s:
     if fact[0] == 'trigUti':
@@ -163,6 +163,7 @@ def build_big_table(all_facts, scenarios):
 scenarios = [f"s{i}" for i in range(1, 6)]
 mk_big = build_big_table(facts, scenarios)
 display(Markdown(mk_big))
+
 
   
 
