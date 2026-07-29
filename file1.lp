@@ -8,8 +8,8 @@ location(madrid;cemetery;family).
 
 
 % Current and potential situations
-% situation(base). %mk1
-situation(alt1). %mk2
+situation(base). %mk1
+% situation(alt1). %mk2
 % situation(alt2). %mk3 pour afficher dans la bonne boite, rerun et chang mkx
 
 
