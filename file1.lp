@@ -8,8 +8,8 @@ location(madrid;cemetery;family).
 
 
 % Current and potential situations
-situation(base). %mk1
-% situation(alt1). %mk2
+% situation(base). %mk1
+situation(alt1). %mk2
 % situation(alt2). %mk3 pour afficher dans la bonne boite, rerun et chang mkx
 
 
@@ -110,8 +110,7 @@ believe(P1,check(X,Y,L,Z)) :- utter(Y,X,N, inform(at(Z,L))), believe(P1,credible
 believe(P1,escaped(Y,X)) :- act(evade(Y,X)), believe(P1,check(X,Y,madrid,Z)).
 
 % Rule for killing
-believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)), 
-                              believe(P1,murderer(X)).
+believe(P1,kill(X,Y,Z)) :- believe(P1,check(X,Y,L,Z)), believe(P1,at(Z,L)). 
 
 
 % Rules for an agent being harmed based on differents reasons
